@@ -5,8 +5,11 @@ class Expense {
     this.incomeList = document.querySelector("#income-list");
     this.balance = document.querySelector("#balance");
     this.expenses = document.querySelector("#expenses");
+    this.averageIncome = document.querySelector("#avg-income");
     this.currentExpenses;
+    this.averageCounter = 0;
     this.expenseValue;
+    this.totalIncome = 0;
 
     this.addEventListeners();
   }
@@ -41,6 +44,12 @@ class Expense {
     deleteBtn.textContent = "X";
     deleteBtn.classList.add("delete-btn");
     deleteBtn.addEventListener("click", () => {
+      const removedValue = Number(
+        incomeItem.textContent.split("X")[0].replace("$", "").trim()
+      );
+      this.totalIncome -= removedValue;
+      this.balance.textContent = `$${this.totalIncome}`;
+
       this.incomeList.removeChild(incomeItem);
     });
 
@@ -49,10 +58,17 @@ class Expense {
 
     this.enterIncome.value = "";
     this.addBalance();
+    this.addAverage();
   }
   addBalance() {
-    this.currentExpenses = +this.expenseValue;
-    this.balance.textContent = `${this.currentExpenses}`;
+    this.totalIncome += Number(this.expenseValue);
+    this.balance.textContent = `$${this.totalIncome}`;
+  }
+  addAverage() {
+    this.averageCounter += Number(this.expenseValue);
+    this.averageIncome.textContent = `$${(
+      this.averageCounter / this.incomeList.children.length
+    ).toFixed(2)}`;
   }
 }
 
