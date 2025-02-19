@@ -114,3 +114,11 @@ input {
 .minus {
   color: red;
 }
+.expense-item {
+  font-weight: bold;
+  color: rgb(243, 145, 145);
+}
+.income-item {
+  font-weight: bold;
+  color: rgb(157, 245, 157);
+}

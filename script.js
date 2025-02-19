@@ -6,9 +6,14 @@ class Expense {
     this.balance = document.querySelector("#balance");
     this.expenses = document.querySelector("#expenses");
     this.averageIncome = document.querySelector("#avg-income");
-    this.currentExpenses;
-    this.averageCounter = 0;
+    this.addTransactionBtn = document.querySelector("#adddd-transaction");
+    this.enterExpense = document.querySelector("#transaction-amount");
+    this.enterPurpose = document.querySelector("#transaction-purpose");
+    this.expenseList = document.querySelector("#expense-list");
     this.expenseValue;
+    this.totalExpense = 0;
+    this.averageCounter = 0;
+    this.incomeValue;
     this.totalIncome = 0;
 
     this.addEventListeners();
@@ -19,11 +24,13 @@ class Expense {
       "click",
       this.addIncomeHandler.bind(this)
     );
+    this.addTransactionBtn.addEventListener(
+      "click",
+      this.transactionHandler.bind(this)
+    );
   }
-
-  addIncomeHandler() {
-    this.expenseValue = this.enterIncome.value.trim();
-
+  transactionHandler() {
+    this.expenseValue = this.enterExpense.value.trim();
     if (
       this.expenseValue === "" ||
       isNaN(this.expenseValue) ||
@@ -32,13 +39,49 @@ class Expense {
       alert("You have to add a valid income amount");
       return;
     }
+    if (this.enterPurpose.value === "") {
+      alert("You have to add a purpose");
+      return;
+    }
+    const expenseItem = document.createElement("li");
+    expenseItem.classList.add("expense-item");
+    expenseItem.textContent = `$${this.expenseValue}`;
 
-    console.log("Adding income:", this.expenseValue);
+    const deleteExpense = document.createElement("button");
+    deleteExpense.textContent = "X";
+    deleteExpense.classList.add("delete-btn");
+    deleteExpense.addEventListener("click", () => {
+      const removedExpense = Number(
+        expenseItem.textContent.split("X")[0].replace("$", "").trim()
+      );
+      this.totalExpense -= removedExpense;
 
-    // Kreiramo novi li element za listu
+      this.expenseList.removeChild(expenseItem);
+    });
+
+    expenseItem.appendChild(deleteExpense);
+    this.expenseList.appendChild(expenseItem);
+
+    this.enterExpense.value = "";
+    this.enterPurpose.value = "";
+    this.addExpense();
+  }
+
+  addIncomeHandler() {
+    this.incomeValue = this.enterIncome.value.trim();
+
+    if (
+      this.incomeValue === "" ||
+      isNaN(this.incomeValue) ||
+      this.incomeValue <= 0
+    ) {
+      alert("You have to add a valid income amount");
+      return;
+    }
+
     const incomeItem = document.createElement("li");
     incomeItem.classList.add("income-item");
-    incomeItem.textContent = `$${this.expenseValue}`;
+    incomeItem.textContent = `$${this.incomeValue}`;
 
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "X";
@@ -61,14 +104,19 @@ class Expense {
     this.addAverage();
   }
   addBalance() {
-    this.totalIncome += Number(this.expenseValue);
+    this.totalIncome += Number(this.incomeValue);
     this.balance.textContent = `$${this.totalIncome}`;
   }
   addAverage() {
-    this.averageCounter += Number(this.expenseValue);
+    this.averageCounter += Number(this.incomeValue);
     this.averageIncome.textContent = `$${(
       this.averageCounter / this.incomeList.children.length
     ).toFixed(2)}`;
+  }
+  addExpense() {
+    this.totalExpense += Number(this.expenseValue);
+    this.expenses.textContent = `$${this.totalExpense}`;
+    this.balance.textContent = `$${this.totalIncome - this.totalExpense}`;
   }
 }
 
